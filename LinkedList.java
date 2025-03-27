@@ -54,7 +54,7 @@ public class LinkedList
 
     }
 
-    public void print()
+    public static void print()
     {
 
         // O(n)
@@ -141,13 +141,142 @@ public class LinkedList
         return val;
     }
 
+    public int itrSearch(int key)
+    {
+        Node temp = head;
+        int idx = 0;
+        while(temp!=null)
+        {
+            if(temp.data==key) // key found
+            {
+                return idx;
+            }
+            temp = temp.next;
+            idx++;
+        }
+
+        // key not found
+        return -1;
+    }
+
+    public void reverse()
+    {
+        Node prev = null;
+        Node curr = tail = head;
+        Node next;
+        while(curr!=null)
+        {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        head = prev;
+    }
+
+    public Node midNode()
+    {
+        Node slow,fast;
+        slow = head;fast = head;
+        while(fast!=null && fast.next!=null)
+        {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+
+    public boolean isPalindrome()
+    {
+        if(head==null || head.next==null)
+        {
+            return true;
+        }
+        // Step-1: Find the middle node
+        Node mid = midNode();
+        Node curr,next,prev;
+        curr = mid;
+        prev = null;
+        // Step-2: Reverse nodes from middle node to last node
+        while(curr!=null)
+        {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        // Step-3: Initialize left and right as their respective ends
+        Node left,right;
+        left = head;right = prev;
+        while(left!=null && right!=null)
+        {
+            if(left.data!=right.data) return false;
+            left = left.next;
+            right = right.next;
+        }
+        return true;
+    }
+
+    public static boolean isCycle()
+    {
+        Node slow,fast;
+        slow = head;fast = head;
+        while(fast!=null && fast.next!=null)
+        {
+            slow = slow.next;
+            fast = fast.next.next;
+            if(slow==fast)
+            {
+                return true;// Cycle exists
+            }
+        }
+        return false;// Cycle does not exist
+    }
+
+    // This code doesn't work only when there's a full cycle
+    public static void removeCycle()
+    {
+        // detect cycle
+        Node slow,fast;
+        boolean cycle = false;
+        slow = fast = head;
+        while(fast!=null && fast.next!=null)
+        {
+            slow = slow.next;
+            fast = fast.next.next;
+            if(slow==fast)
+            {
+                cycle = true;
+                break;
+            }
+        }
+        if(cycle==false)
+        {
+            return;
+        }
+        // find meeting point
+        Node prev = null;
+        slow = head;
+        while(slow!=fast)
+        {
+            slow = slow.next;
+            prev = fast;
+            fast = fast.next;
+        }
+        // remove cycle -> last.next = null
+        prev.next = null;
+    }
+
     public static void main(String[] args)
     {
-        LinkedList ll = new LinkedList();
-        ll.addFirst(1);
-        ll.print();
-        ll.removeLast();
-        ll.print();
-        System.out.println(ll.size);
+        head = new Node(1);
+        head.next = new Node(2);
+        Node temp = new Node(3);
+        head.next.next = temp;
+        head.next.next.next = new Node(4);
+        head.next.next.next.next = temp;
+        System.out.println(isCycle());
+        removeCycle();
+        System.out.println(isCycle());
     }
 }
