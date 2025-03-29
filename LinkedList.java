@@ -174,10 +174,10 @@ public class LinkedList
         head = prev;
     }
 
-    public Node midNode()
+    public Node midNode(Node temp)
     {
         Node slow,fast;
-        slow = head;fast = head;
+        slow = fast = temp;
         while(fast!=null && fast.next!=null)
         {
             slow = slow.next;
@@ -188,12 +188,24 @@ public class LinkedList
 
     public boolean isPalindrome()
     {
-        if(head==null || head.next==null)
+        // Make a copy of linked list
+        Node temporary = new Node(head.data);
+        Node ll = head.next;
+        Node temp = temporary;
+        while(ll!=null)
+        {
+            Node tem = new Node(ll.data);
+            temporary.next = tem;
+            temporary = temporary.next;
+            ll = ll.next;
+        }
+        temporary.next = null;
+        if(temp==null || temp.next==null)
         {
             return true;
         }
         // Step-1: Find the middle node
-        Node mid = midNode();
+        Node mid = midNode(temp);
         Node curr,next,prev;
         curr = mid;
         prev = null;
@@ -267,16 +279,75 @@ public class LinkedList
         prev.next = null;
     }
 
+    public Node getMid(Node head)
+    {
+        Node slow,fast;
+        slow = head;
+        fast = head.next;
+        while(fast!=null && fast.next!=null)
+        {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+
+    public Node mergesort(Node head)
+    {
+        if(head==null || head.next==null)
+        {
+            return head;
+        }
+        Node mid = getMid(head);
+        Node right = mid.next;
+        mid.next = null;
+        Node leftHead = mergesort(head);
+        Node rightHead = mergesort(right);
+        return sort(leftHead,rightHead);
+    }
+
+    public Node sort(Node leftHead,Node rightHead)
+    {
+        Node temp = new Node(-1);
+        Node sortedLL = temp;
+        while(leftHead!=null && rightHead!=null)
+        {
+            if(leftHead.data<=rightHead.data)
+            {
+                temp.next = leftHead;
+                leftHead = leftHead.next;
+                temp = temp.next;
+            }
+            else
+            {
+                temp.next = rightHead;
+                rightHead = rightHead.next;
+                temp = temp.next;
+            }
+        }
+        while(leftHead!=null)
+        {
+            temp.next = leftHead;
+            leftHead = leftHead.next;
+            temp = temp.next;            
+        }
+        while(rightHead!=null)
+        {
+            temp.next = rightHead;
+            rightHead = rightHead.next;
+            temp = temp.next;            
+        }
+        return sortedLL.next;
+    }
+
     public static void main(String[] args)
     {
-        head = new Node(1);
-        head.next = new Node(2);
-        Node temp = new Node(3);
-        head.next.next = temp;
-        head.next.next.next = new Node(4);
-        head.next.next.next.next = temp;
-        System.out.println(isCycle());
-        removeCycle();
-        System.out.println(isCycle());
+        LinkedList ls = new LinkedList();
+        ls.addFirst(12);
+        ls.addLast(11);
+        ls.addLast(12);
+        ls.print();
+        head = ls.mergesort(head);
+        ls.print();
     }
 }
