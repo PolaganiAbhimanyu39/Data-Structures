@@ -340,14 +340,52 @@ public class LinkedList
         return sortedLL.next;
     }
 
+    public void zigzag()
+    {
+        // find mid
+        Node mid = getMid(head);
+        Node right = mid.next;
+        mid.next = null;
+
+        // reverse 2nd half
+        Node next,prev,curr;
+        curr = right;
+        prev = null;
+        while(curr!=null)
+        {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        // alternative merge - zig-zag
+        right = prev;
+        Node left = head,nextLeft,nextRight;
+        while(left!=null&&right!=null)
+        {
+            nextLeft = left.next;
+            left.next = right;
+            nextRight = right.next;
+            right.next = nextLeft;
+
+            left = nextLeft;
+            right = nextRight;
+        }
+    }
+
     public static void main(String[] args)
     {
         LinkedList ls = new LinkedList();
-        ls.addFirst(12);
-        ls.addLast(11);
-        ls.addLast(12);
+        ls.addFirst(1);
+        ls.addLast(2);
+        ls.addLast(3);
+        ls.addLast(4);
+        ls.addLast(5);
+        ls.addLast(6);
+        ls.addLast(7);
+        ls.addLast(8);
         ls.print();
-        head = ls.mergesort(head);
+        ls.zigzag();
         ls.print();
     }
 }
